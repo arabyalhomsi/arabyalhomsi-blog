@@ -1,5 +1,5 @@
 var elixir = require('laravel-elixir');
-
+			
 /*
  |--------------------------------------------------------------------------
  | Elixir Asset Management
@@ -11,6 +11,24 @@ var elixir = require('laravel-elixir');
  |
  */
 
+var PTV = '../vendor';
+
 elixir(function(mix) {
-    mix.sass('app.scss');
+    mix.sass('app.scss')
+    	
+    	.browserify('app.js', 'public/js/app.js')
+		
+		.styles([
+			PTV + '/normalize-css/normalize.css',
+			PTV + '/font-awesome/css/font-awesome.css'
+		], 'public/css/vendor.css')
+
+		.scripts([
+			PTV + '/jquery/dist/jquery.min.js',
+			PTV + '/underscore/underscore-min.js',
+			PTV + '/backbone/backbone-min.js',
+		], 'public/js/vendor.js')
+
+		.copy('resources/assets/images', 'public/images')
+		.copy('resources/assets/vendor/font-awesome/fonts', 'public/fonts')
 });

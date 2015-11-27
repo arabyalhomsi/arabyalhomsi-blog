@@ -1,0 +1,23 @@
+{
+  "name": "lbBlog",
+  "version": "0.0.0",
+  "homepage": "https://github.com/arabyalhomsi/arabyalhomsi-blog",
+  "authors": [
+    "Araby Alhomsi <araby.ami@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.2.3",
+    "jquery": "~2.1.4",
+    "normalize-css": "normalize.css#~3.0.3",
+    "font-awesome": "fontawesome#~4.5.0"
+  }
+}
