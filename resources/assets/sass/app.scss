@@ -1,2 +1,109 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import 'variables';
+@import 'mixins';
+/**
+ * Table of Contents:
+ * -generic styles
+ * -html elements
+ * -.wrapper
+ * -.sidebar
+ * -.content
+ * -.navigation
+ * -.social-links
+ * 
+ * -helpers
+ */
 
+
+/**
+ * generic styles
+ */
+* {
+	@include border-box();
+}
+
+/**
+ * html elements
+ */
+body {
+	background-color: #F5F5F5;
+}
+
+/**
+ * .wrapper
+ */
+.wrapper {
+
+}
+
+/**
+ * .sidebar
+ */
+.sidebar {
+	position: fixed;
+	left:0;
+	top:0;
+	height: 100%;
+	width: $sidebar-width;
+	background-color: #FFF;
+	box-shadow: 0 0 2px 3px rgba(0,0,0,.03),0 1px 5px rgba(0,0,0,.1);
+	padding: 10px 20px;
+
+	.sidebar__content-block {
+		font-family: 'Open Sans';
+		padding: 10px 0;
+
+		img {
+			max-width: 230px;
+		}
+		.profile-image {
+			width: 230px;
+		}
+		.website-title {
+			font-family: 'Roboto';
+		}
+		.bio-text {
+			font-size: 13px;
+			color: $grey-color;
+		}
+	}
+}
+
+
+/**
+ * .content
+ */
+.content {
+	width: $content-width;
+	float: right;
+}
+
+/**
+ * .navigation
+ */
+.navigation {
+	display: none; // remove it
+}
+
+/**
+ * .social-links
+ */
+.social-links {
+	display: inline-block;
+	margin:0;
+	padding:0;
+	li {
+		display: inline-block;
+		list-style-type: none;
+		margin: 0 8px;
+		a {
+			color: $grey-color;
+		}
+	}
+}
+
+/**
+ * helpers
+ */
+.clear {
+	clear: both;
+}
