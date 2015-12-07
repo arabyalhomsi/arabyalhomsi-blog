@@ -45,9 +45,10 @@ class Handler extends ExceptionHandler
         if ($e instanceof ModelNotFoundException) {
             $e = new NotFoundHttpException($e->getMessage(), $e);
         }
-
-        if ($e->getStatusCode() == 404) {
-            return response()->view('index');
+        if ($request->isMethod('get')) {
+            if ($e->getStatusCode() == 404) {
+                return response()->view('index');
+            }
         }
 
         return parent::render($request, $e);
