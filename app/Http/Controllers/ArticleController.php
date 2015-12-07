@@ -119,10 +119,7 @@ class ArticleController extends Controller
         
         // add the article to its categories.
         if ($request->has('category')) {
-            $categories = $request->get('category');
-            foreach ($categories as $category) {
-                Category::find($category)->articles()->save($article);
-            }
+            $article->categories()->attach($request->get('category'));
         }
 
         return response()->json([
