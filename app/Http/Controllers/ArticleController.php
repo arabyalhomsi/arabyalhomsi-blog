@@ -60,7 +60,10 @@ class ArticleController extends Controller
             }
         }
 
-        return response()->json($articles->get());
+        return response()->json([
+            'code' => '200',
+            'data' => $articles->get()
+        ], 200);
     }
 
     /**
@@ -75,29 +78,33 @@ class ArticleController extends Controller
 
 
         $article = Article::findOrResponse($request->get('id'));
+        $article->categories; // include categories with the article
 
-        return $article;
-
+        return response()->json([
+            'code' => '200',
+            'data' => $article
+        ], 200);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Create new Article
      */
     public function postCreate(Request $request)
     {
         $user = Auth::user();
-
+        
         $rules = [
             'title' => 'required|min:3|max:500',
-            'body' => 'required|min:3'
+            'body' => 'required|min:3',
+            'category' => 'array|numeric_array|array_exists:categories,id'
         ];
-
+        
         $validation = Validator::make($request->all(), $rules);
 
         if ($validation->fails()) {
             return response()->json([
                 'code' => '400',
-                'message' => 'Validation Error',
+                'message' => 'Validation Failed',
                 'data' => $validation->errors()
             ], 400);
         }
@@ -107,27 +114,79 @@ class ArticleController extends Controller
             'body' => $request->get('body')
         ]);
 
+        // add the article to its user.
         $user->articles()->save($article);
         
+        // add the article to its categories.
+        if ($request->has('category')) {
+            $categories = $request->get('category');
+            foreach ($categories as $category) {
+                Category::find($category)->articles()->save($article);
+            }
+        }
+
         return response()->json([
             'code' => '200',
             'message' => 'Article Created Successfully'
         ], 200);
-
-        // todo: add categories support
     }
 
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Update Article
      */
-    public function postUpdate(Request $request, $id)
+    public function postUpdate(Request $request)
     {
-        //
+        if (!$request->has('id')) 
+            return response()->json([
+                'code' => '400',
+                'message' => 'You must specify an id'
+            ], 400);
+
+        $user = Auth::user();
+        $article = Article::findOrResponse($request->get('id'));
+
+        if ($user->id != $article->user_id)
+            return response()->json([
+                'code' => '401',
+                'message' => 'You are not authorized to update this article.'
+            ], 401);
+        
+        $rules = [
+            'title' => 'min:3|max:500',
+            'body' => 'min:3',
+            'category' => 'array|numeric_array|array_exists:categories,id'
+        ];
+
+        $validation = Validator::make($request->all(), $rules);
+
+        if ($validation->fails())
+            return response()->json([
+                'code' => '400',
+                'message' => 'Validation Failed',
+                'data' => $validation->errors()
+            ], 400);
+
+        if ($request->has('title'))
+            $article->title = $request->get('title');
+
+        if ($request->has('body'))
+            $article->body = $request->get('body');
+            
+        if ($request->has('category'))
+            $article->categories()->sync($request->get('category'));
+
+        if ($article->save()) {
+            return response()->json([
+                'code' => '200',
+                'message' => 'Article updated successfully.'
+            ], 200);
+        }else {
+            return response()->json([
+                'code' => '500',
+                'message' => 'Error when saving the article.'
+            ], 500);
+        }
     }
 
     /**
