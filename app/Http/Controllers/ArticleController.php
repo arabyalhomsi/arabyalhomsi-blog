@@ -84,6 +84,8 @@ class ArticleController extends Controller
             'code' => '200',
             'data' => $article
         ], 200);
+
+        // TODO: add views counter
     }
 
     /**
@@ -126,6 +128,8 @@ class ArticleController extends Controller
             'code' => '200',
             'message' => 'Article Created Successfully'
         ], 200);
+
+        // TODO: Create url from the name of the article.
     }
 
 
@@ -192,8 +196,41 @@ class ArticleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function postDestroy($id)
+    public function postDelete(Request $request)
     {
-        //
+        if (!$request->has('id'))
+            return response()->json([
+                'code' => '400',
+                'message' => 'You must specify an id'
+            ], 400);
+
+        $rules = [
+            'id' => 'numeric|exists:articles,id'
+        ];
+
+        $validation = Validator::make($request->all(), $rules);
+        if ($validation->fails())
+            return response()->json([
+                'code' => '400',
+                'message' => 'Validation Failed',
+                'data' => $validation->errors()
+            ], 400);
+
+        $user = Auth::user();
+        $article = Article::findOrResponse($request->get('id'));
+        
+        if ($user->id != $article->user_id)
+            return response()->json([
+                'code' => '401',
+                'message' => 'You are not authorized to delete this article.'
+        ], 401);
+        
+        $article->categories()->detach();
+        $article->delete();
+
+        return response()->json([
+            'code' => '200',
+            'message' => 'Article removed successfully.'
+        ], 200);
     }
 }
