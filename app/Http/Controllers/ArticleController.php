@@ -77,7 +77,7 @@ class ArticleController extends Controller
         ], 404);
 
 
-        $article = Article::findOrResponse($request->get('id'));
+        $article = Article::findOrFail($request->get('id'));
         $article->categories; // include categories with the article
 
         return response()->json([
@@ -144,14 +144,7 @@ class ArticleController extends Controller
                 'message' => 'You must specify an id'
             ], 400);
 
-        $user = Auth::user();
-        $article = Article::findOrResponse($request->get('id'));
-
-        if ($user->id != $article->user_id)
-            return response()->json([
-                'code' => '401',
-                'message' => 'You are not authorized to update this article.'
-            ], 401);
+        $article = Article::findOrFail($request->get('id'));
         
         $rules = [
             'title' => 'min:3|max:500',
@@ -213,14 +206,7 @@ class ArticleController extends Controller
                 'data' => $validation->errors()
             ], 400);
 
-        $user = Auth::user();
-        $article = Article::findOrResponse($request->get('id'));
-        
-        if ($user->id != $article->user_id)
-            return response()->json([
-                'code' => '401',
-                'message' => 'You are not authorized to delete this article.'
-        ], 401);
+        $article = Article::findOrFail($request->get('id'));
         
         $article->categories()->detach();
         $article->delete();

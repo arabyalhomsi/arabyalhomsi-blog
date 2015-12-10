@@ -44,16 +44,4 @@ class Article extends Model
     {
         return $this->belongsToMany('App\Category');
     }
-
-    public static function findOrResponse($id) {
-        $article = self::find($id);
-        
-        if (!$article)
-            return response()->json([
-            'code' => '404',
-            'message' => 'could not find an article'
-        ], 404);
-
-        return $article;
-    }
 }
